@@ -2,7 +2,14 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Sebastian Schmidt"
 
-ENV WINEPREFIX=/wine DEBIAN_FRONTEND=noninteractive PUID=0 PGID=0
+ENV WINEPREFIX=/wine DEBIAN_FRONTEND=noninteractive PUID=0 PGID=0 \
+    SERVERNAME=Der-Wald \
+    SERVERPORT=27015 \
+    QUERYPORT=27016 \
+    STEAMPORT=8766 \
+    SERVERPASSWORD=changeme \
+    SERVERADMINPASSWORD=changeme
+
 
 RUN dpkg --add-architecture i386 \
     && apt-get update \
@@ -27,7 +34,37 @@ RUN apt-get remove -y software-properties-common apt-transport-https cabextract 
     && echo $TIMEZONE > /etc/timezone \
     && chmod +x /usr/bin/steamcmdinstaller.sh /usr/bin/servermanager.sh /wrapper.sh
 
-EXPOSE 8766/tcp 8766/udp 27015/tcp 27015/udp 27016/tcp 27016/udp
+RUN mkdir /theforest && mkdir /theforest/config
+
+RUN echo "serverIP 0.0.0.0\n" \
+         "serverSteamPort ${STEAMPORT}\n" \
+         "serverGamePort ${SERVERPORT}\n" \
+         "serverQueryPort ${QUERYPORT}\n" \
+         "serverName ${SERVERNAME}\n" \
+         "serverPlayers 8\n" \
+         "enableVAC off\n" \
+         "serverPassword ${SERVERPASSWORD}\n" \
+         "serverPasswordAdmin ${SERVERADMINPASSWORD}\n" \
+         "serverSteamAccount\n" \
+         "serverAutoSaveInterval 30\n" \
+         "difficulty Normal\n" \
+         "initType Continue\n" \
+         "slot 1\n" \
+         "showLogs off\n" \
+         "serverContact email@gmail.com\n" \
+         "veganMode off\n" \
+         "vegetarianMode off\n" \
+         "resetHolesMode off\n" \
+         "treeRegrowMode off\n" \
+         "allowBuildingDestruction on\n" \
+         "allowEnemiesCreativeMode off\n" \
+         "allowCheats off\n" \
+         "realisticPlayerDamage off\n" \
+         "saveFolderPath\n" \
+         "targetFpsIdle 0\n" \
+         "targetFpsActive 0\n" > /theforest/config/config.cfg
+
+EXPOSE ${STEAMPORT}/tcp ${STEAMPORT}/udp ${SERVERPORT}/tcp ${SERVERPORT}/udp ${QUERYPORT}/tcp ${QUERYPORT}/udp
 
 VOLUME ["/theforest", "/steamcmd"]
 
