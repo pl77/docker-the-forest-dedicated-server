@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-LABEL maintainer="Sebastian Schmidt"
+LABEL maintainer="Steffen Förster"
 
 ENV WINEPREFIX=/wine DEBIAN_FRONTEND=noninteractive PUID=0 PGID=0 \
     SERVERNAME=Der-Wald \
