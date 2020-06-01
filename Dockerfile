@@ -18,6 +18,7 @@ RUN dpkg --add-architecture i386 \
     && apt-key add winehq.key \
     && rm winehq.key \
     && apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/ \
+    && add-apt-repository ppa:cybermax-dexter/sdl2-backport \
     && apt-get update \
     && apt-get install -y winehq-stable \
     && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
