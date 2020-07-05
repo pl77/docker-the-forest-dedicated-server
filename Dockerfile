@@ -2,14 +2,16 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Sebastian Schmidt"
 
-ENV WINEPREFIX=/wine DEBIAN_FRONTEND=noninteractive PUID=0 PGID=0 \
-    SERVERNAME=Der-Wald \
-    SERVERPORT=27015 \
-    QUERYPORT=27016 \
-    STEAMPORT=8766 \
-    SERVERPASSWORD=changeme \
-    SERVERADMINPASSWORD=changeme
-
+ENV WINEPREFIX=${WINEPREFIX} \
+    DEBIAN_FRONTEND=${DEBIAN_FRONTEND} \
+    PUID=${PUID} \
+    PGID=${PGID} \
+    SERVERNAME=${SERVERNAME} \
+    SERVERPORT=${SERVERPORT} \
+    QUERYPORT=${QUERYPORT} \
+    STEAMPORT=${STEAMPORT} \
+    SERVERPASSWORD=${SERVERPASSWORD} \
+    SERVERADMINPASSWORD=${SERVERPORT}
 
 RUN dpkg --add-architecture i386 \
     && apt-get update \
@@ -32,38 +34,39 @@ COPY . ./
 RUN apt-get remove -y software-properties-common apt-transport-https cabextract \
     && rm -rf winetricks /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
-    && echo $TIMEZONE > /etc/timezone \
+    && echo ${TIMEZONE} > /etc/timezone \
     && chmod +x /usr/bin/steamcmdinstaller.sh /usr/bin/servermanager.sh /wrapper.sh
 
 RUN mkdir /theforest && mkdir /theforest/config
 
-RUN echo "serverIP 0.0.0.0\n" \
+RUN echo "serverIP ${SERVERIP}\n" \
          "serverSteamPort ${STEAMPORT}\n" \
-         "serverGamePort ${SERVERPORT}\n" \
+         "serverGamePort ${GAMEPORT}\n" \
          "serverQueryPort ${QUERYPORT}\n" \
          "serverName ${SERVERNAME}\n" \
-         "serverPlayers 8\n" \
-         "enableVAC off\n" \
+         "serverPlayers ${MAXPLAYERS}\n" \
+         "enableVAC ${ENABLEVAC}\n" \
          "serverPassword ${SERVERPASSWORD}\n" \
          "serverPasswordAdmin ${SERVERADMINPASSWORD}\n" \
-         "serverSteamAccount\n" \
-         "serverAutoSaveInterval 30\n" \
-         "difficulty Normal\n" \
-         "initType Continue\n" \
-         "slot 1\n" \
-         "showLogs off\n" \
-         "serverContact email@gmail.com\n" \
-         "veganMode off\n" \
-         "vegetarianMode off\n" \
-         "resetHolesMode off\n" \
-         "treeRegrowMode off\n" \
-         "allowBuildingDestruction on\n" \
-         "allowEnemiesCreativeMode off\n" \
-         "allowCheats off\n" \
-         "realisticPlayerDamage off\n" \
-         "saveFolderPath\n" \
-         "targetFpsIdle 0\n" \
-         "targetFpsActive 0\n" > /theforest/config/config.cfg
+         "serverSteamAccount ${STEAMACCOUNT}\n" \
+         "serverAutoSaveInterval ${AUTOSAVEINTERVAL}\n" \
+         "difficulty ${DIFFICULTY}\n" \
+         "initType ${INITTYPE}\n" \
+         "slot ${SLOT}\n" \
+         "showLogs ${SHOWLOGS}\n" \
+         "serverContact ${SERVERCONTACT}\n" \
+         "veganMode ${VEGANMODE}\n" \
+         "vegetarianMode ${VEGETARIANMODE}\n" \
+         "resetHolesMode ${RESETHOLESMODE}\n" \
+         "treeRegrowMode ${TREEREGROWMODE}\n" \
+         "allowBuildingDestruction ${ALLOWBUILDINGDESTRUCTION}\n" \
+         "allowEnemiesCreativeMode ${ALLOWENEMIESCREATIVEMODE}\n" \
+         "allowCheats ${ALLOWCHEATS}\n" \
+         "saveFolderPath ${SAVEFOLDERPATH}\n" \
+         "targetFpsIdle ${TARGETFPSIDLE}\n" \
+         "targetFpsActive ${TARGETFPSACTIVE}\n" \
+         "configfilepath ${CONFIGFILEPATH}\n" \
+         "realisticPlayerDamage ${REALISTICPLAYERDAMAGE}\n" > ${CONFIGFILEPATH}
 
 EXPOSE ${STEAMPORT}/tcp ${STEAMPORT}/udp ${SERVERPORT}/tcp ${SERVERPORT}/udp ${QUERYPORT}/tcp ${QUERYPORT}/udp
 
